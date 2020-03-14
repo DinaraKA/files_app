@@ -2,7 +2,8 @@
 {% block title %}Файл{% endblock %}
 {% block menu %}
     {% if request.user == file.author or perms.webapp.change_file %}
-        <li class="nav-item active"><a class="nav-link" href="{% url 'webapp:file_edit' file.pk %}">Редактировать</a></li>
+        <li class="nav-item active"><a class="nav-link" href="{% url 'webapp:file_edit' file.pk %}">Редактировать</a>
+        </li>
     {% endif %}
     {% if request.user == file.author or perms.webapp.delete_file %}
         <li class="nav-item active"><a class="nav-link" href="{% url 'webapp:file_delete' file.pk %}">Удалить</a></li>
@@ -11,7 +12,7 @@
 {% block content %}
     <div class="jumbotron jumbotron-fluid">
         <div class="container">
-            <h3>{{ file.name}}</h3>
+            <h3>{{ file.name }}</h3>
             <hr class="my-4">
             {% if file.author %}
                 <p><b>Создан: </b>{{ file.author }}</p>
@@ -23,4 +24,26 @@
             <p>Скачать: <a href="{{ file.file.url }}">{{ file.file }}</a></p>
         </div>
     </div>
+    <h5>Добавить пользователя в Приват (введите username)</h5>
+    <form action="{% url 'webapp:add_to_private' %}" method="POST" id="add_lesson">
+        {% include 'partial/form.html' %}
+        <p class="text-center"><input type="submit" value="Добавить" id="add-to-privates-{{ user.pk }}"
+                                      class="btn btn-success privates-add"></p>
+    </form>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Профиль</th>
+        </tr>
+        </thead>
+        {% for user in users %}
+            <tbody>
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td><a href="#">{{ user }}</a></td>
+            </tr>
+            </tbody>
+        {% endfor %}
+    </table>
 {% endblock %}

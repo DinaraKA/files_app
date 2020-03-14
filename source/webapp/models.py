@@ -17,3 +17,14 @@ class File(models.Model):
     def __str__(self):
         return self.name
 
+
+class Private(models.Model):
+    file = models.ForeignKey('File', on_delete=models.CASCADE, related_name='privates')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='private_access')
+
+    def __str__(self):
+        return self.file.name
+
+    class Meta:
+        verbose_name = 'Приват'
+        verbose_name_plural = 'Приват'

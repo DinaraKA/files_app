@@ -11,11 +11,9 @@
             <th scope="col">Название</th>
             <th scope="col">Автор/Дата</th>
             <th scope="col">Скачать</th>
-            <th>access</th>
         </tr>
         </thead>
         {% for file in files %}
-{#            {% if file.access == 'base' %}#}
             <tbody>
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
@@ -30,7 +28,6 @@
                     {% endif %}
                 </td>
                 <td><p><a href="{{ file.file.url }}">{{ file.file }}</a></p></td>
-                <td>{{ file.access }}</td>
             </tr>
             </tbody>
         {% endfor %}

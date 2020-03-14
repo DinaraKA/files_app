@@ -1,14 +1,16 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.http import HttpResponseRedirect, JsonResponse
+from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.utils.http import urlencode
 from django.db.models import Q
+from django.views import View
 
-from webapp import forms
-from webapp.forms import SimpleSearchForm, FileForm, FileAnonymousForm
-from webapp.models import File
+from webapp.forms import SimpleSearchForm, FileForm, FileAnonymousForm, PrivateForm
+from webapp.models import File, Private
 
 
 class IndexView(ListView):
@@ -52,6 +54,14 @@ class FileDetailView(DetailView):
     model = File
     template_name = 'file_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['form'] = PrivateForm()
+        file = File.objects.get(pk=self.kwargs['pk'])
+        context['users'] = Private.objects.filter(file=file)
+        print(Private.objects.filter(file=file))
+        return context
+
 
 class FileCreateView(CreateView):
     model = File
@@ -59,7 +69,6 @@ class FileCreateView(CreateView):
 
     def get_form_class(self):
         if self.request.user.is_anonymous:
-            print('yes')
             self.form_class = FileAnonymousForm
         else:
             self.form_class = FileForm
@@ -82,7 +91,6 @@ class FileUpdateView(UserPassesTestMixin, UpdateView):
 
     def get_form_class(self):
         if self.request.user.is_anonymous:
-            print('yes')
             self.form_class = FileAnonymousForm
         else:
             self.form_class = FileForm
@@ -107,3 +115,27 @@ class FileDeleteView(UserPassesTestMixin, DeleteView):
         file = File.objects.get(pk=file_pk)
         return self.request.user == file.author or self.request.user.has_perm('webapp.delete_file')
 
+
+class AddToPrivate(View):
+    template_name = 'add.html'
+    model = Private
+    form_class = None
+
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(data=request.POST)
+        file = get_object_or_404(File, pk=request.POST.get('pk'))
+        self.object = form.save(commit=False)
+        user = form.cleaned_data['user']
+        print(user)
+        if user in User.objects.all():
+            Private.objects.get_or_create(file=file, user=user)
+        return JsonResponse({'pk': file.pk})
+
+
+# class DeleteFromFavorites(View):
+#     def post(self, request, *args, **kwargs):
+#         user = request.user
+#         ad = get_object_or_404(Ad, pk=request.POST.get('pk'))
+#         Favorite.objects.filter(ad=ad, user=user).delete()
+#         return JsonResponse({'pk': ad.pk})

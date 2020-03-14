@@ -26,9 +26,6 @@
                     <li class="nav-item active">
                         <a class="nav-link" href="{% url 'webapp:index' %}">Главная</a>
                     </li>
-                    {#                    <li class="nav-item active"><a class="nav-link" href="#"></a></li>#}
-                    {#                    <li class="nav-item active"><a class="nav-link" href="#"></a></li>#}
-
                     {% block menu %}{% endblock %}
                 </ul>
                 <ul class="navbar-nav ml-auto">
@@ -39,8 +36,6 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'accounts:logout' %}">Выйти</a></li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Войти</a></li>
-                        <li class="nav-item"><a class="nav-link"
-                                                href="{% url 'accounts:register' %}">Зарегистрироваться</a></li>
                     {% endif %}
                 </ul>
             </div>

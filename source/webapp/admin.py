@@ -1,5 +1,5 @@
 from django.contrib import admin
-from webapp.models import File
+from webapp.models import File, Private
 
 
 class FileAdmin(admin.ModelAdmin):
@@ -9,5 +9,6 @@ class FileAdmin(admin.ModelAdmin):
 
 
 admin.site.register(File, FileAdmin)
+admin.site.register(Private)
 
 

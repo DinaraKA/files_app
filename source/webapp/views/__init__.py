@@ -1,1 +1,1 @@
-from .file_views import IndexView, FileDetailView, FileCreateView, FileUpdateView, FileDeleteView
+from .file_views import IndexView, FileDetailView, FileCreateView, FileUpdateView, FileDeleteView, AddToPrivate
