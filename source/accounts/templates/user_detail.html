@@ -20,5 +20,10 @@
             </div>
         </div>
     </div>
+    {% if not files %}
+        <p>У Вас нет загруженных файлов!!!</p>
+    {% else %}
+        {% include 'partial/files_list.html' %}
+    {% endif %}
 {% endblock %}
 

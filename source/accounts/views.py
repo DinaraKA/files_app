@@ -4,6 +4,7 @@ from django.views.generic import DetailView
 from django.contrib.auth.models import User
 from accounts.forms import UserCreationForm
 from accounts.models import Profile
+from webapp.models import File
 
 
 def register_view(request):
@@ -30,6 +31,12 @@ class UserDetailView(DetailView):
     model = User
     template_name = 'user_detail.html'
     context_object_name = 'user_object'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        user = User.objects.get(pk=self.kwargs['pk'])
+        context['files'] = File.objects.filter(author=user.pk)
+        return context
 
 
 

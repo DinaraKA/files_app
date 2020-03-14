@@ -1,8 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h3>Sign up</h3>
+    <h3>Регистрация</h3>
     <form action="{% url 'accounts:register' %}" method="post"  style="width: 50%; justify-items: center; margin: auto">
-        {% include 'partial/form.html' with button_text="Save" %}
+        {% include 'partial/form.html'%}
+        <p class="text-center"><input type="submit" value="Зарегистрировать" class="btn btn-success"></p>
     </form>
 {% endblock %}
