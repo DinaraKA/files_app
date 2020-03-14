@@ -1,3 +1,6 @@
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.shortcuts import redirect
+from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from webapp.models import File
 
@@ -17,104 +20,42 @@ class FileDetailView(DetailView):
     template_name = 'file_detail.html'
 
 
-# class TaskCreateView(PermissionRequiredMixin, SessionStatMixin, CreateView):
-#     model = Task
-#     template_name = 'task/create.html'
-#     form_class = TaskForm
-#     permission_required = 'webapp.add_task'
-#     permission_denied_message = 'Access is denied!'
+class FileCreateView(CreateView):
+    model = File
+    template_name = 'add.html'
+    fields = ['name', 'file', 'access']
 
-#     def form_valid(self, form):
-#         self.object = form.save(commit=False)
-#         self.object.created_by = self.request.user
-#         self.object.save()
-#         return HttpResponseRedirect(self.get_success_url())
+    def form_valid(self, form):
+        file = File(
+            name = form.cleaned_data['name'],
+            author = self.request.user,
+            file = form.cleaned_data['file'],
+            access= form.cleaned_data['access']
+        )
+        file.save()
+        return redirect('webapp:file_detail', pk=file.pk)
 
-#     def get_success_url(self):
-#         return reverse('webapp:task_view', kwargs={'pk': self.object.pk})
+class FileUpdateView(UserPassesTestMixin, UpdateView):
+    model = File
+    template_name = 'edit.html'
+    fields = ['name', 'file', 'access']
 
-#     def get_form(self, form_class=None):
-#         form = super().get_form()
-#         user_projects_list = Team.objects.filter(user__username=self.request.user).values_list('project', flat=None)
-#         form.fields['project'].queryset = Project.objects.filter(pk__in=user_projects_list)
-#         return form
+    def test_func(self):
+        file_pk = self.kwargs.get('pk')
+        file = File.objects.get(pk=file_pk)
+        return self.request.user == file.author or self.request.user.has_perm('webapp.change_file')
 
-#     def get_form_kwargs(self):
-#         kwargs = super().get_form_kwargs()
-#         users_list = Team.objects.filter(user__username=self.request.user).values_list('user', flat=None)
-#         kwargs['users_list'] = users_list
-#         return kwargs
-
-
-# class TaskProjectCreateView(PermissionRequiredMixin, SessionStatMixin, CreateView):
-#     template_name = 'task/task_project_create.html'
-#     form_class = ProjectTaskForm
-#     permission_required = 'webapp.add_task'
-#     permission_denied_message = 'Access is denied!'
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         project = Project.objects.get(pk=self.kwargs['pk'])
-#         context['project'] = project
-#         return context
-
-#     def form_valid(self, form):
-#         project_pk = self.kwargs.get('pk')
-#         project = get_object_or_404(Project, pk=project_pk)
-#         project.tasks.create(created_by = self.request.user, **form.cleaned_data)
-#         return redirect('webapp:project_view', pk=project_pk)
-
-#     def get_form_kwargs(self):
-#         kwargs = super().get_form_kwargs()
-#         project = self.kwargs['pk']
-#         users_in_project = User.objects.filter(user_team__project=project)
-#         kwargs['users'] = users_in_project
-#         return kwargs
-
-# class TaskUpdateView(PermissionRequiredMixin, UserPassesTestMixin, SessionStatMixin, UpdateView):
-#     model = Task
-#     template_name = 'task/update.html'
-#     form_class = TaskForm
-#     context_object_name = 'task'
-#     permission_required = 'webapp.change_task'
-#     permission_denied_message = 'Access is denied!'
-
-#     def get_success_url(self):
-#         return reverse('webapp:task_view', kwargs={'pk': self.object.pk})
-
-#     def get_form_kwargs(self):
-#         kwargs = super().get_form_kwargs()
-#         users_list = Team.objects.filter(user__username=self.request.user).values_list('user', flat=None)
-#         kwargs['users_list'] = users_list
-#         return kwargs
+    def get_success_url(self):
+        return reverse('webapp:file_detail', kwargs={"pk": self.object.pk})
 
 
-#     def test_func(self, **kwargs):
-#         task = Task.objects.get(pk=self.kwargs.get('pk'))
-#         project = Project.objects.get(pk=task.project.pk)
-#         user_pk_list = Team.objects.filter(project=project, end=None).distinct().values_list('user_id', flat=True)
-#         if self.request.user.pk in user_pk_list:
-#             return True
-#         else:
-#             return False
+class FileDeleteView(UserPassesTestMixin, DeleteView):
+    model = File
+    template_name = 'delete.html'
+    success_url = reverse_lazy('webapp:index')
 
-
-# class TaskDeleteView(PermissionRequiredMixin, UserPassesTestMixin, SessionStatMixin, DeleteView):
-#     model = Task
-#     context_object_name = 'task'
-#     template_name = 'task/delete.html'
-#     success_url = reverse_lazy('webapp:index')
-#     permission_required = 'webapp.delete_task'
-#     permission_denied_message = 'Access is denied!'
-
-
-#     def test_func(self, **kwargs):
-#         task = Task.objects.get(pk=self.kwargs.get('pk'))
-#         project = Project.objects.get(pk=task.project.pk)
-#         team = Team.objects.filter(project=project, end=None).distinct()
-#         user_pk_list = team.values_list('user_id', flat=True)
-#         if self.request.user.pk in user_pk_list:
-#             return True
-#         else:
-#             return False
+    def test_func(self):
+        file_pk = self.kwargs.get('pk')
+        file = File.objects.get(pk=file_pk)
+        return self.request.user == file.author or self.request.user.has_perm('webapp.delete_file')
 

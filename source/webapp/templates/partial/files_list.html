@@ -1,0 +1,37 @@
+<h1>Файлы</h1>
+{#    {% include 'partial/simple_search.html' %}#}
+<form method="POST" action="{% url 'webapp:index' %}">
+    {% csrf_token %}
+    {% if is_paginated %}
+        {% include 'partial/pagination.html' %}
+    {% endif %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Название</th>
+            <th scope="col">Скачать</th>
+        </tr>
+        </thead>
+        {% for file in files %}
+            <tbody>
+            <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td><a href="{% url 'webapp:file_detail' file.pk %}">{{ file.name }}</a>
+                    {% if file.author %}
+                        <p>Автор:
+                            <a href="{% url 'accounts:user_detail' file.author.pk %}">{{ file.author }}</a>, {{ file.date|date:'d/m/Y H:i:s' }}
+                        </p>
+                    {% else %}
+                        <p>Автор: Аноним, {{ file.date|date:'d/m/Y' }}</p>
+                    {% endif %}
+                </td>
+                <td><p><a href="{{ file.file.url }}">{{ file.file }}</a></p></td>
+            </tr>
+            </tbody>
+        {% endfor %}
+    </table>
+    {% if is_paginated %}
+        {% include 'partial/pagination.html' %}
+    {% endif %}
+</form>

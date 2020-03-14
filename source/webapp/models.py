@@ -11,7 +11,7 @@ class File(models.Model):
     file = models.FileField(upload_to='files', verbose_name='Файл')
     name = models.CharField(max_length=20, verbose_name='Название')
     author = models.ForeignKey(User, verbose_name='Автор', on_delete=models.CASCADE, related_name='file_author', null=True, blank=True)
-    date = models.DateField(auto_now_add=True, verbose_name='Дата добавления')
+    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления')
     access = models.CharField(max_length=20, default=ACCESS_CHOICES[0][0], verbose_name='Доступ', choices=ACCESS_CHOICES)
 
     def __str__(self):

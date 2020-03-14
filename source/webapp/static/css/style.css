@@ -6,7 +6,7 @@ body{
     width: 90%;
     margin: 0 auto;
 }
-h1{
+h1, h3{
     text-align: center;
     padding-top: 10px;
 }
@@ -24,6 +24,7 @@ h1{
 }
 .pagination a {
     margin: auto 10px;
+    color: #5bbc2e;
 }
 .field-error {
     border: solid 1px red;
@@ -53,3 +54,13 @@ h1{
     box-sizing: border-box;
     background: white;
 }
+.table a{
+    color: black;
+    text-decoration: none;
+}
+.table a:hover{
+    color: #5bbc2e;
+}
+/*.table{*/
+    /*border: solid #5bbc2e;*/
+/*}*/
