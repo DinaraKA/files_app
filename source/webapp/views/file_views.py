@@ -1,6 +1,5 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
@@ -8,7 +7,6 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from django.utils.http import urlencode
 from django.db.models import Q
 from django.views import View
-
 from webapp.forms import SimpleSearchForm, FileForm, FileAnonymousForm, PrivateForm
 from webapp.models import File, Private
 
@@ -58,8 +56,11 @@ class FileDetailView(DetailView):
         context = super().get_context_data()
         context['form'] = PrivateForm()
         file = File.objects.get(pk=self.kwargs['pk'])
-        context['users'] = Private.objects.filter(file=file)
-        print(Private.objects.filter(file=file))
+        privates = Private.objects.filter(file=file)
+        users=[]
+        for private in privates:
+            users.append(private.user)
+        context['users'] = users
         return context
 
 
@@ -127,7 +128,7 @@ class AddToPrivate(View):
         file = get_object_or_404(File, pk=request.POST.get('pk'))
         self.object = form.save(commit=False)
         user = form.cleaned_data['user']
-        print(user)
+        print(user, 'yes')
         if user in User.objects.all():
             Private.objects.get_or_create(file=file, user=user)
         return JsonResponse({'pk': file.pk})

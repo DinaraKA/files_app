@@ -20,6 +20,7 @@ class FileAnonymousForm(forms.ModelForm):
         fields = ['name', 'file']
 
 
+
 class PrivateForm(forms.Form):
     user = forms.CharField(label='Пользователь')
 

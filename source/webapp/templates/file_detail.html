@@ -25,6 +25,13 @@
         </div>
     </div>
     <h5>Добавить пользователя в Приват (введите username)</h5>
+    <div class='user-container'>
+        {% for obj in result %}
+            <p class="user_text">{{ obj.first_name }}-{{ obj.last_name }}</p>
+        {% endfor %}
+    </div>
+
+
     <form action="{% url 'webapp:add_to_private' %}" method="POST" id="add_lesson">
         {% include 'partial/form.html' %}
         <p class="text-center"><input type="submit" value="Добавить" id="add-to-privates-{{ user.pk }}"
@@ -46,4 +53,12 @@
             </tbody>
         {% endfor %}
     </table>
+{% endblock %}
+{% block scripts %}
+    <script>
+        $(".user_text").click(function () {
+            let user_info = $(this).context.innerText;
+            $('#id_text').val(user_info);
+        })
+    </script>
 {% endblock %}

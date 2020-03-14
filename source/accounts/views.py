@@ -12,7 +12,7 @@ class UserDetailView(DetailView):
         context = super().get_context_data()
         user = User.objects.get(pk=self.kwargs['pk'])
         context['self_files'] = File.objects.filter(author=user.pk)
-        context['files'] = File.objects.filter(access='base').order_by('-date')
+        context['files'] = File.objects.filter(access='base', author=user.pk)
         return context
 
 
