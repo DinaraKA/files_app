@@ -35,7 +35,8 @@ class UserDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         user = User.objects.get(pk=self.kwargs['pk'])
-        context['files'] = File.objects.filter(author=user.pk)
+        context['self_files'] = File.objects.filter(author=user.pk)
+        context['files'] = File.objects.filter(access='base').order_by('-date')
         return context
 
 

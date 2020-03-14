@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}Файл{% endblock %}
 {% block menu %}
-{#    {% if perms.webapp.change_task %}#}
+    {% if request.user == file.author or perms.webapp.change_file %}
         <li class="nav-item active"><a class="nav-link" href="{% url 'webapp:file_edit' file.pk %}">Редактировать</a></li>
-{#    {% endif %}#}
-{#    {% if perms.webapp.delete_task %}#}
+    {% endif %}
+    {% if request.user == file.author or perms.webapp.delete_file %}
         <li class="nav-item active"><a class="nav-link" href="{% url 'webapp:file_delete' file.pk %}">Удалить</a></li>
-{#    {% endif %}#}
+    {% endif %}
 {% endblock %}
 {% block content %}
     <div class="jumbotron jumbotron-fluid">

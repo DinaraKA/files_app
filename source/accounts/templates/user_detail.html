@@ -22,6 +22,8 @@
     </div>
     {% if not files %}
         <p>У Вас нет загруженных файлов!!!</p>
+    {% elif user_object == request.user %}
+        {% include 'partial/files_list.html' with files=self_files %}
     {% else %}
         {% include 'partial/files_list.html' %}
     {% endif %}

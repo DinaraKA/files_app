@@ -9,14 +9,18 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">Название</th>
+            <th scope="col">Автор/Дата</th>
             <th scope="col">Скачать</th>
+            <th>access</th>
         </tr>
         </thead>
         {% for file in files %}
+{#            {% if file.access == 'base' %}#}
             <tbody>
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
-                <td><a href="{% url 'webapp:file_detail' file.pk %}">{{ file.name }}</a>
+                <td><a href="{% url 'webapp:file_detail' file.pk %}">{{ file.name }}</a></td>
+                <td>
                     {% if file.author %}
                         <p>Автор:
                             <a href="{% url 'accounts:user_detail' file.author.pk %}">{{ file.author }}</a>, {{ file.date|date:'d/m/Y H:i:s' }}
@@ -26,6 +30,7 @@
                     {% endif %}
                 </td>
                 <td><p><a href="{{ file.file.url }}">{{ file.file }}</a></p></td>
+                <td>{{ file.access }}</td>
             </tr>
             </tbody>
         {% endfor %}

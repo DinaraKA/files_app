@@ -1,10 +1,13 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.utils.http import urlencode
 from django.db.models import Q
-from webapp.forms import SimpleSearchForm
+
+from webapp import forms
+from webapp.forms import SimpleSearchForm, FileForm, FileAnonymousForm
 from webapp.models import File
 
 
@@ -12,7 +15,6 @@ class IndexView(ListView):
     template_name = 'index.html'
     model = File
     context_object_name = 'files'
-    ordering = ['-date']
     paginate_by = 10
     paginate_orphans = 1
 
@@ -24,6 +26,7 @@ class IndexView(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(object_list=object_list, **kwargs)
         context['form'] = self.form
+        context['files'] = File.objects.filter(access='base').order_by('-date')
         if self.search_value:
             context['query'] = urlencode({'search': self.search_value})
         return context
@@ -53,22 +56,37 @@ class FileDetailView(DetailView):
 class FileCreateView(CreateView):
     model = File
     template_name = 'add.html'
-    fields = ['name', 'file', 'access']
+
+    def get_form_class(self):
+        if self.request.user.is_anonymous:
+            print('yes')
+            self.form_class = FileAnonymousForm
+        else:
+            self.form_class = FileForm
+        return self.form_class
 
     def form_valid(self, form):
-        file = File(
-            name = form.cleaned_data['name'],
-            author = self.request.user,
-            file = form.cleaned_data['file'],
-            access= form.cleaned_data['access']
-        )
-        file.save()
-        return redirect('webapp:file_detail', pk=file.pk)
+        self.object = form.save(commit=False)
+        author = self.request.user
+        self.object.author_id = author.pk
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse('webapp:index')
+
 
 class FileUpdateView(UserPassesTestMixin, UpdateView):
     model = File
     template_name = 'edit.html'
-    fields = ['name', 'file', 'access']
+
+    def get_form_class(self):
+        if self.request.user.is_anonymous:
+            print('yes')
+            self.form_class = FileAnonymousForm
+        else:
+            self.form_class = FileForm
+        return self.form_class
 
     def test_func(self):
         file_pk = self.kwargs.get('pk')
