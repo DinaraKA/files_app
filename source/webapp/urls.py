@@ -1,12 +1,11 @@
 from django.urls import path
-# from webapp.views import IndexView
+from webapp.views import IndexView, FileDetailView
 
 app_name = 'webapp'
 
 urlpatterns = [
-    # path('', IndexView.as_view(), name='index')
-    # path('', AdListView.as_view(), name='index'),
-    # path('ad/<int:pk>/', AdDetailView.as_view(), name='ad_detail'),
+    path('', IndexView.as_view(), name='index'),
+    path('file/<int:pk>/', FileDetailView.as_view(), name='file_detail'),
     # path('ad/add/', AdCreateView.as_view(), name='ad_create'),
     # path('ad/edit/<int:pk>/', AdUpdateView.as_view(), name='ad_edit'),
     # path('ad/delete/<int:pk>/', AdDeleteView.as_view(), name='ad_delete'),

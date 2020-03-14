@@ -1,0 +1,1 @@
+from .file_views import IndexView, FileDetailView

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block menu %}
+{#    {% if perms.webapp.add_task %}#}
+{#        <li><a href="{% url 'webapp:task_add' %}">Add Task</a></li>#}
+{#    {% endif %}#}
+{% endblock %}
+{% block content %}
+    <h1>Файлы</h1>
+{#    {% include 'partial/simple_search.html' %}#}
+    <form method="POST" action="{% url 'webapp:index' %}">
+        {% csrf_token %}
+    {% if is_paginated %}
+        {% include 'partial/pagination.html' %}
+    {% endif %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Название</th>
+                    <th scope="col">Скачать</th>
+                </tr>
+            </thead>
+            {% for file in files %}
+                <tbody>
+                    <tr>
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td><a href="{% url 'webapp:file_detail' file.pk %}">{{ file.name }}</a>
+                            {% if file.author %}
+                                <p>Создан:
+                                    <a href="{% url 'accounts:user_detail' file.author.pk  %}">{{ file.author }}</a>, {{ file.date|date:'d/m/Y' }}</p>
+                            {% else %}
+                                <p>Создан: Аноним, {{ file.date|date:'d/m/Y' }}</p>
+                            {% endif %}
+                        </td>
+                        <td><p>{{ file.url }}</p></td>
+                    </tr>
+                </tbody>
+            {% endfor %}
+        </table>
+    {% if is_paginated %}
+        {% include 'partial/pagination.html' %}
+    {% endif %}
+    </form>
+{% endblock %}

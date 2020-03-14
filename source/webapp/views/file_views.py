@@ -1,59 +1,20 @@
-# from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
-# from django.contrib.auth.models import User
-# from django.db.models import Q
-# from django.http import HttpResponseRedirect
-# from django.shortcuts import get_object_or_404, redirect
-# from django.urls import reverse, reverse_lazy
-# from django.utils.http import urlencode
-# from django.views.generic import ListView, DetailView, CreateView, UpdateView,DeleteView
-# from webapp.models import Task, Project, Team
-# from webapp.forms import TaskForm, ProjectTaskForm, SimpleSearchForm
-# from webapp.views.base_views import SessionStatMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from webapp.models import File
 
 
-# class IndexView(SessionStatMixin, ListView):
-#     context_object_name = 'tasks'
-#     model = Task
-#     template_name = 'task/index.html'
-#     ordering = ['-created_at']
-#     paginate_by = 5
-#     paginate_orphans = 1
-
-#     def get(self, request, *args, **kwargs):
-#         self.form = self.get_search_form()
-#         self.search_query = self.get_search_query()
-#         return super().get(request, *args, **kwargs)
-
-#     def get_context_data(self, *, object_list=None, **kwargs):
-#         context = super().get_context_data(object_list=object_list, **kwargs)
-#         if self.search_query:
-#             context['query'] = urlencode({'search': self.search_query})
-#         context['form'] = self.form
-#         return context
-
-#     def get_queryset(self):
-#         queryset = super().get_queryset()
-#         if self.search_query:
-#             queryset = queryset.filter(
-#                 Q(summary__icontains=self.search_query)
-#                 | Q(description__icontains=self.search_query)
-#             ).distinct()
-#         return queryset
-
-#     def get_search_form(self):
-#         return SimpleSearchForm(self.request.GET)
-
-#     def get_search_query(self):
-#         if self.form.is_valid():
-#             return self.form.cleaned_data['search']
-#         return None
+class IndexView(ListView):
+    template_name = 'index.html'
+    model = File
+    context_object_name = 'files'
+    ordering = ['-date']
+    paginate_by = 10
+    paginate_orphans = 1
 
 
-# class TaskView(SessionStatMixin, DetailView):
-#     context_object_name = 'task'
-#     model = Task
-#     pk_url_kwarg = 'pk'
-#     template_name = 'task/task.html'
+class FileDetailView(DetailView):
+    context_object_name = 'file'
+    model = File
+    template_name = 'file_detail.html'
 
 
 # class TaskCreateView(PermissionRequiredMixin, SessionStatMixin, CreateView):
