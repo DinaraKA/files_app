@@ -40,7 +40,7 @@ class UserCreationForm(forms.Form):
                                   code='passwords_do_not_match')
         return password_2
 
-
     class Meta:
         model = User
-        fields = ['username', 'password', 'password_confirm', 'first_name', 'last_name', 'email']
+        fields = ['first_name', 'last_name', 'email']
+        profile_fields = ['avatar']

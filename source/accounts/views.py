@@ -19,7 +19,7 @@ def register_view(request):
             )
             user.set_password(form.cleaned_data['password'])
             user.save()
-            Profile.objects.create(user=user, avatar=form.cleaned_data['avatar'])
+            Profile.objects.create(user=user)
             login(request, user)
             return redirect('webapp:index')
     else:

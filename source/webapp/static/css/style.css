@@ -61,6 +61,14 @@ h1, h3{
 .table a:hover{
     color: #5bbc2e;
 }
+.search {
+    text-align: end;
+    margin-top: 10px;
+    margin-right: 13px;
+}
+.search input{
+    border-color: #5bbc2e;
+}
 /*.table{*/
     /*border: solid #5bbc2e;*/
 /*}*/

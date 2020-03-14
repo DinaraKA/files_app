@@ -3,9 +3,9 @@
     <li class="nav-item active"><a class="nav-link" href="{% url 'webapp:file_create' %}">Загрузить файл</a></li>
 {% endblock %}
 {% block content %}
+    {% include 'partial/search.html' %}
     {% include 'partial/files_list.html' %}
 {#    <h1>Файлы</h1>#}
-{#    {% include 'partial/simple_search.html' %}#}
 {#    <form method="POST" action="{% url 'webapp:index' %}">#}
 {#        {% csrf_token %}#}
 {#    {% if is_paginated %}#}

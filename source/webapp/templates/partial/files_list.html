@@ -1,5 +1,4 @@
 <h1>Файлы</h1>
-{#    {% include 'partial/simple_search.html' %}#}
 <form method="POST" action="{% url 'webapp:index' %}">
     {% csrf_token %}
     {% if is_paginated %}
