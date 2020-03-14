@@ -1,0 +1,21 @@
+<div class="pagination">
+    <span class="step-links">
+        <a href="?page=1">&laquo;Начало</a>
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">Назад</a>
+        {% else %}
+            <span class="page-disabled">Назад</span>
+        {% endif %}
+
+        <span class="current">
+            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">Вперед</a>
+        {% else %}
+            <span class="page-disabled">Вперед</span>
+        {% endif %}
+        <a href="?page={{ page_obj.paginator.num_pages }}">Конец&raquo;</a>
+    </span>
+</div>
