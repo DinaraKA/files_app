@@ -34,21 +34,31 @@
 
     <form action="{% url 'webapp:add_to_private' %}" method="POST" id="add_lesson">
         {% include 'partial/form.html' %}
-        <p class="text-center"><input type="submit" value="Добавить" id="add-to-privates-{{ user.pk }}"
-                                      class="btn btn-success privates-add"></p>
+        <p class="text-center">
+            <button style="display: inline-flex"><input class="btn privates-add" type="submit" value="Найти"></button>
+        </p>
+        {#        <input type="submit" value="Добавить" id="add-to-privates-{{ user.pk }}"#}
+        {#                                      class="btn btn-success privates-add">#}
     </form>
     <table class="table">
+        <h5>Список приватных пользователей</h5>
         <thead>
         <tr>
             <th scope="col">#</th>
             <th scope="col">Профиль</th>
+            <th scope="col">Удалить из Привата</th>
         </tr>
         </thead>
         {% for user in users %}
             <tbody>
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
-                <td><a href="#">{{ user }}</a></td>
+                <td><a href="{% url 'accounts:user_detail' user.pk %}">{{ user }}</a></td>
+                <td>
+                    <button class="btn btn-danger" onclick="deleteFromPrivate({{ user.private_access.pk }}, {{ user.user.pk }})">
+                        Удалить
+                    </button>
+                </td>
             </tr>
             </tbody>
         {% endfor %}
@@ -56,9 +66,22 @@
 {% endblock %}
 {% block scripts %}
     <script>
-        $(".user_text").click(function () {
-            let user_info = $(this).context.innerText;
-            $('#id_text').val(user_info);
-        })
+        function deleteFromPrivate(file_id, user_id) {
+            console.log(file_id, user_id);
+            $.ajax({
+                method: 'GET',
+                url: '/user_private_delete',
+                data: {
+                    'file_id': file_id,
+                    'user_id': user_id
+                },
+                dataType: 'json',
+                success: function () {
+                    var elem = $(`#private_user_${user_id}`);
+                    console.log(elem);
+                    elem.remove();
+                }
+            })
+        }
     </script>
 {% endblock %}

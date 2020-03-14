@@ -134,9 +134,9 @@ class AddToPrivate(View):
         return JsonResponse({'pk': file.pk})
 
 
-# class DeleteFromFavorites(View):
-#     def post(self, request, *args, **kwargs):
-#         user = request.user
-#         ad = get_object_or_404(Ad, pk=request.POST.get('pk'))
-#         Favorite.objects.filter(ad=ad, user=user).delete()
-#         return JsonResponse({'pk': ad.pk})
+class UserPrivateDelete(View):
+    def post(self, request):
+        file = File.objects.get(pk = int(request.POST['file_id']))
+        user = User.objects.get(id = int(request.POST['user_id']))
+        Private.objects.filter(file=file, user=user).delete()
+        return JsonResponse({'status':'200'})

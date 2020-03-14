@@ -10,6 +10,9 @@ h1, h3{
     text-align: center;
     padding-top: 10px;
 }
+h5 {
+    color: #5bbc2e;
+}
 .header{
     background-color: #5bbc2e;
 }
@@ -72,6 +75,3 @@ h1, h3{
 .label-form{
     display: inline-flex;
 }
-/*.table{*/
-    /*border: solid #5bbc2e;*/
-/*}*/
