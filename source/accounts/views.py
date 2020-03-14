@@ -1,11 +1,9 @@
-
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from django.views.generic import DetailView, UpdateView
+from django.views.generic import DetailView
 from django.contrib.auth.models import User
-from django.urls import reverse
-from accounts.forms import UserCreationForm, UserInfoChangeForm, UserPasswordChangeForm
+from accounts.forms import UserCreationForm
+from accounts.models import Profile
 
 
 def register_view(request):
@@ -20,7 +18,7 @@ def register_view(request):
             )
             user.set_password(form.cleaned_data['password'])
             user.save()
-            Profile.objects.create(user=user)
+            Profile.objects.create(user=user, avatar=form.cleaned_data['avatar'])
             login(request, user)
             return redirect('webapp:index')
     else:
@@ -34,29 +32,6 @@ class UserDetailView(DetailView):
     context_object_name = 'user_object'
 
 
-class UserInfoChangeView(UserPassesTestMixin, UpdateView):
-    model = User
-    template_name = 'user_update.html'
-    context_object_name = 'user_object'
-    form_class = UserInfoChangeForm
 
-    def test_func(self):
-        return self.get_object() == self.request.user
-
-    def get_success_url(self):
-        return reverse('accounts:user_detail', kwargs={'pk': self.object.pk})
-
-
-class UserPasswordChangeView(UserPassesTestMixin, UpdateView):
-    model = User
-    template_name = 'user_password_change.html'
-    form_class = UserPasswordChangeForm
-    context_object_name = 'user_object'
-
-    def test_func(self):
-        return self.get_object() == self.request.user
-
-    def get_success_url(self):
-        return reverse('accounts:login')
 
 
